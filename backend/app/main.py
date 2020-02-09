@@ -99,11 +99,9 @@ def watermask():
 
     rawBytes = io.BytesIO()
     im = Image.fromarray((result_img*255).astype("uint8"))
-    print(result_img*255)
     im.save(rawBytes, "PNG")
     rawBytes.seek(0)
     return base64.b64encode(rawBytes.read())
-    pass
 
 
 if __name__ == "__main__":

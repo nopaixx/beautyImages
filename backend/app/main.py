@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import request
+from flask_cors import CORS
 import base64
 import sys
 import tensorflow as tf
@@ -45,7 +46,7 @@ import cv2 as cv2
 
 
 app = Flask(__name__)
-
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/")
 def hello():
@@ -63,6 +64,10 @@ def watermask():
 
     """
     import keras.backend.tensorflow_backend as tb
+    config = tf.compat.v1.ConfigProto()
+    config.gpu_options.allow_growth = True
+    sess = tf.compat.v1.Session(config=config)
+
     tb._SYMBOLIC_SCOPE.value = True
     # get images in base64 combert to numpy image with opencv
     # resize image to expected model call predict
@@ -79,8 +84,8 @@ def watermask():
     initial_h = img.shape[0]
     initial_w = img.shape[1]
     x_img = img_to_array(img)
-    expect_h = 128
-    expect_w = 128
+    expect_h = 256
+    expect_w = 256
     x_img = resize(x_img, (expect_h, expect_w, 3), mode='constant', preserve_range=True) / 255
     input_img = Input((expect_h, expect_w, 3), name='img')
     model = get_unet(input_img, n_filters=16, dropout=0.05, batchnorm=True)

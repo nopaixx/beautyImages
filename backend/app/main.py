@@ -10,6 +10,7 @@ import json
 import cv2 as cv2
 from PIL import Image
 from models.unet import get_unet
+from models.unet import get_unet_256
 from keras.layers import Input
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from skimage.transform import resize
@@ -87,9 +88,9 @@ def watermask():
     expect_h = 256
     expect_w = 256
     x_img = resize(x_img, (expect_h, expect_w, 3), mode='constant', preserve_range=True) / 255
-    input_img = Input((expect_h, expect_w, 3), name='img')
-    model = get_unet(input_img, n_filters=16, dropout=0.05, batchnorm=True)
-
+    # input_img = Input((expect_h, expect_w, 3), name='img')
+    # model = get_unet(input_img, n_filters=16, dropout=0.05, batchnorm=True)
+    model = get_unet_256((expect_h, expect_w, 3))
     # model.compile(optimizer=Adam(), loss="binary_crossentropy", metrics=["accuracy"])
     # Load best model
     model.load_weights('model-sea.h5')
